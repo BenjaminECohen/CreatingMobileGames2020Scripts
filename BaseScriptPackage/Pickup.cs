@@ -26,12 +26,21 @@ public class Pickup : MonoBehaviour
     public int scoreAmount;
 
     private GameManager_SideScroller gameManager;
-    
 
     [Header("Inventory System: Item Details")]
     public string itemName = "Item";
     public int itemID = 0;
     public bool destroyOnUse = false;
+    SpriteRenderer spriteRenderer;
+
+    private void Start()
+    {
+        gameManager = FindObjectOfType<GameManager_SideScroller>();
+        if (type == PickupType.Item)
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -52,8 +61,11 @@ public class Pickup : MonoBehaviour
         if (type == PickupType.Item && collision.tag == "Player")
         {
             collision.TryGetComponent<Player_Inventory>(out Player_Inventory inv);
-            inv.inventory.Add(new Player_Inventory.Item(itemName, itemID, destroyOnUse));
+            inv.AddItemToInventory(new Player_Inventory.Item(itemName, itemID, spriteRenderer.sprite, spriteRenderer.color, destroyOnUse));
+
             this.gameObject.SetActive(false);
+
+            
 
         }
     }

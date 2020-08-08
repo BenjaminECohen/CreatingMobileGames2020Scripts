@@ -76,8 +76,17 @@ public class PlayerMovement_SideScroller : MonoBehaviour
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
 
-        ComputeIsGrounded(); //Finds out if the player is grounded or not
-        SlopeChecker(); //Checks to see if the player is on a slope
+        if (jumped && rb.velocity.y < 0)
+        {
+            jumped = false;
+        }
+
+        if (!jumped)
+        {
+            ComputeIsGrounded(); //Finds out if the player is grounded or not
+        }
+        
+        
         computeLastHorizontal();
 
         if (isGrounded || canMoveInAir)
@@ -108,7 +117,7 @@ public class PlayerMovement_SideScroller : MonoBehaviour
             else
             {
                 //If the character is frozen, we stop moving immediately. 
-                rb.velocity = Vector3.zero;
+                rb.velocity = new Vector3(0.0f, rb.velocity.y, 0.0f);
                 animator.SetFloat("Horizontal", 0);
             }
         }
@@ -116,29 +125,6 @@ public class PlayerMovement_SideScroller : MonoBehaviour
 
         
 
-    }
-
-    /// <summary>
-    /// Use to keep you grounded when you are on the ground
-    /// </summary>
-    void SlopeChecker()
-    {
-
-        RaycastHit2D slopehit = Physics2D.Raycast(p_collider.bounds.center, Vector2.down, p_collider.bounds.extents.y * 2, groundLayer);
-        if (developerShowBoxCastBounds)
-        {
-            Debug.DrawRay(p_collider.bounds.center, Vector2.down * p_collider.bounds.extents.y * 2, Color.yellow);
-        }
-
-        if (isGrounded && (slopehit.normal.y < 1.0f && slopehit.normal.y > 0.0f))
-        {
-            rb.gravityScale = 5.0f;
-        }
-        else
-        {
-            rb.gravityScale = 1f;
-        }
-        
     }
 
     /// <summary>
@@ -152,15 +138,15 @@ public class PlayerMovement_SideScroller : MonoBehaviour
         }
         if (isGrounded || canMoveInAir)
         {
-            if (lastHorizontal > 0)
+            if (lastHorizontal >= 0)
             {
                 //spriteRenderer.flipX = true;
-                transform.localScale = new Vector3(scale.x * -1, scale.y, scale.z);
+                transform.localScale = new Vector3(scale.x, scale.y, scale.z);
             }
             else
             {
                 //spriteRenderer.flipX = false;
-                transform.localScale = new Vector3(scale.x, scale.y, scale.z);
+                transform.localScale = new Vector3(scale.x * -1, scale.y, scale.z);
             }
         }
         
@@ -171,15 +157,19 @@ public class PlayerMovement_SideScroller : MonoBehaviour
         RaycastHit2D hit = Physics2D.BoxCast(p_collider.bounds.center, p_collider.bounds.size, 0.0f, Vector2.down, boxCastDepth, groundLayer);
 
         //Debug stuff
-
         BoxCastDebugRays(hit);
 
         if (hit.collider != null)
         {
+            if (jumped)
+            {
+                Debug.Log($"We are grounded {Time.time}");
+            }
+            
             jumps = maxJumps;
             animator.SetBool("isGrounded", true);
             isGrounded = true;
-            jumped = false;
+            //jumped = false;
         } 
         else
         {
@@ -209,34 +199,5 @@ public class PlayerMovement_SideScroller : MonoBehaviour
             Debug.DrawRay(p_collider.bounds.center + new Vector3(-p_collider.bounds.extents.x, -p_collider.bounds.extents.y - boxCastDepth), Vector2.right * (p_collider.bounds.extents.x * 2), color);
         }
     }
-
-    /*
-    //When we come into contact with the ground, our total amount of jumps is reset to our max value
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        Debug.Log(collision.gameObject.tag);
-        if (collision.gameObject.tag == "Ground")
-        {
-            jumps = maxJumps;
-            animator.SetBool("isGrounded", true);
-            isGrounded = true;
-            jumped = false;
-        }
-    }*/
-
-    /*
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Ground")
-        {
-            animator.SetBool("isGrounded", false);
-            if (!canMoveInAir)
-            {
-                isGrounded = false;
-            }
-            
-        }
-    }*/
-
 
 }

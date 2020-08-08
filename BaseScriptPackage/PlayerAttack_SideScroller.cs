@@ -13,6 +13,7 @@ public class PlayerAttack_SideScroller : MonoBehaviour
     private Animator animator;
     public Weapon weapon;
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,7 +25,13 @@ public class PlayerAttack_SideScroller : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Mouse0) && !animator.GetBool("Attack"))
         {
-            animator.SetBool("Attack", true);
+            if (weapon)
+            {
+                //ATTACK!
+                animator.SetBool("Attack", true);
+
+            }
+            
         }
     }
 }

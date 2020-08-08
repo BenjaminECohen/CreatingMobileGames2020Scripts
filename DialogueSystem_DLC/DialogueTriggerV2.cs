@@ -9,8 +9,7 @@ using UnityEngine;
 public class DialogueTriggerV2 : MonoBehaviour
 {
     //Attach this script to an empty gameobject with a 2D collider set to trigger
-
-
+    DialogueManagerV2 manager;
     public TextAsset TextFileAsset; // your imported text file for your NPC
     private Queue<string> dialogue = new Queue<string>(); // stores the dialogue (Great Performance!)
     public float waitTime = 0.5f; // lag time for advancing dialogue so you can actually read it
@@ -18,14 +17,31 @@ public class DialogueTriggerV2 : MonoBehaviour
     public bool singleUseDialogue = false;
     [HideInInspector]
     public bool hasBeenUsed = false;
+    bool inArea = false;
 
     // public bool useCollision; // unused for now
 
+    private void Start()
+    {
+         manager = FindObjectOfType<DialogueManagerV2>();
+    }
+
+
+    private void Update()
+    {
+        if (!hasBeenUsed && inArea && Input.GetKeyDown(KeyCode.E) && nextTime < Time.timeSinceLevelLoad)
+        {
+            //Debug.Log("Advance");
+            nextTime = Time.timeSinceLevelLoad + waitTime;
+            manager.AdvanceDialogue();
+        }
+    }
+    /*
     /* Called when you want to start dialogue */
     void TriggerDialogue()
     {
         ReadTextFile(); // loads in the text file
-        FindObjectOfType<DialogueManagerV2>().StartDialogue(dialogue); // Accesses Dialogue Manager and Starts Dialogue
+        manager.StartDialogue(dialogue); // Accesses Dialogue Manager and Starts Dialogue
     }
 
     /* loads in your text file */
@@ -72,25 +88,25 @@ public class DialogueTriggerV2 : MonoBehaviour
     {
         if (other.gameObject.tag == "Player" && !hasBeenUsed)
         {
-            FindObjectOfType<DialogueManagerV2>().currentTrigger = this;
+            manager.currentTrigger = this;
             TriggerDialogue();
-            Debug.Log("Collision");
+            //Debug.Log("Collision");
         }
     }
     private void OnTriggerStay2D(Collider2D other)
     {
-        if (!hasBeenUsed && other.gameObject.tag == "Player" && Input.GetKeyDown(KeyCode.Space) && nextTime < Time.timeSinceLevelLoad)
+        if (other.gameObject.tag == "Player")
         {
-            nextTime = Time.timeSinceLevelLoad + waitTime;
-            FindObjectOfType<DialogueManagerV2>().AdvanceDialogue();
+            inArea = true;
         }
     }
     private void OnTriggerExit2D(Collider2D other)
     {
         if (other.gameObject.tag == "Player")
         {
-            FindObjectOfType<DialogueManagerV2>().EndDialogue();
+            manager.EndDialogue();
         }
+        inArea = false;
         
     }
 }

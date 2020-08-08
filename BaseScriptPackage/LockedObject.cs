@@ -44,7 +44,7 @@ public class LockedObject : MonoBehaviour
                     behaviours(i);
                     break;
                 }
-                if (useKeyID)
+                if (useKeyID && i.itemID == keyID)
                 {
                     unlockGameObject.SetActive(setActive);
 
@@ -63,7 +63,7 @@ public class LockedObject : MonoBehaviour
         //Remove Item
         if(item.destroyOnUse)
         {
-            inv.inventory.Remove(item);
+            inv.RemoveItemFromInventory(item);
         }
         //Set activation
         if (oneTimeActivation)

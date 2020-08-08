@@ -1,3 +1,6 @@
-[NAME=Ben]Why hello there!
-[NAME=Gerald][SPEAKERSPRITE=Gerald]This is a test script to make sure your dialogue is working!
-[SPEAKERSPRITE=]You can even change text <color="yellow">color</color>!
+Hello! This is my first line.
+Second Line! Yay!
+[NAME=Enter NAme Here]Where is my name!
+[NAME=]Now no one is talking!
+[NAME=Knight][SPEAKERSPRITE=Gerald]I am the Night Knight!
+[NAME=][SPEAKERSPRITE=]Clear again!
