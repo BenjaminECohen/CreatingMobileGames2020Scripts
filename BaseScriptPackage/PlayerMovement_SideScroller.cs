@@ -18,6 +18,7 @@ public class PlayerMovement_SideScroller : MonoBehaviour
 
 
 
+
     [Header("Movement Behavior")]
     public float walkSpeed = 500;  
     public float maxJumps = 1;
@@ -174,7 +175,7 @@ public class PlayerMovement_SideScroller : MonoBehaviour
         else
         {
             animator.SetBool("isGrounded", false);
-
+            animator.SetBool("Jumped", jumped);
             isGrounded = false;
             
         }
